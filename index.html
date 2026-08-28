@@ -24,7 +24,8 @@
     color:var(--ink); line-height:1.7; letter-spacing:-.01em;
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem 1.2rem;
   }
-  .card{width:100%; max-width:560px}
+  #bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .card{width:100%; max-width:560px; position:relative; z-index:1}
   .eyebrow{font-family:var(--mono);font-size:.75rem;color:var(--teal);letter-spacing:.14em;margin-bottom:1rem}
   h1{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:800;line-height:1.25;letter-spacing:-.03em}
   h1 em{font-style:normal;color:var(--teal)}
@@ -54,6 +55,7 @@
 </style>
 </head>
 <body>
+<canvas id="bg" aria-hidden="true"></canvas>
 <main class="card">
   <div class="eyebrow">LOCAL WHISPER · WINDOWS</div>
   <h1>말하면, 그대로 <em>타이핑</em>됩니다</h1>
@@ -133,6 +135,48 @@
     }catch(e){
       fallbackToReleases();
     }
+  })();
+</script>
+
+<script>
+  // 배경: 오디오 파형 애니메이션 (앱 주제 = 음성→텍스트). 외부 파일 없음, 저작권 무관.
+  (function(){
+    const c = document.getElementById("bg");
+    if(!c || !c.getContext) return;
+    const ctx = c.getContext("2d");
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let w, h, dpr;
+    function resize(){
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      w = c.width = Math.floor(innerWidth * dpr);
+      h = c.height = Math.floor(innerHeight * dpr);
+      c.style.width = innerWidth + "px";
+      c.style.height = innerHeight + "px";
+    }
+    resize(); addEventListener("resize", resize);
+    const waves = [
+      { amp:.05, len:.9, spd:.55, y:.70, rgb:"45,212,191", a:.14 },
+      { amp:.06, len:1.4, spd:-.4, y:.78, rgb:"20,184,166", a:.10 },
+      { amp:.08, len:.6, spd:.9,  y:.86, rgb:"134,239,172", a:.07 },
+    ];
+    function draw(t){
+      ctx.clearRect(0,0,w,h);
+      for(const v of waves){
+        const amp = v.amp*h, base = v.y*h, k = (Math.PI*2)/(w*v.len);
+        ctx.beginPath();
+        for(let x=0; x<=w; x+=6*dpr){
+          const y = base
+            + Math.sin(x*k + t*0.001*v.spd)*amp
+            + Math.sin(x*k*0.5 + t*0.0013*v.spd)*amp*0.5;
+          x===0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+        }
+        ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+        ctx.fillStyle = `rgba(${v.rgb},${v.a})`;
+        ctx.fill();
+      }
+      if(!reduce) requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
   })();
 </script>
 </body>
