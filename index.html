@@ -85,7 +85,6 @@
   // 릴리스 자산(exe/zip)이 올라갈 "공개" GitHub 레포. Vercel에 연결되는 이 웹 레포와 같아도 됨.
   const REPO = "pyotel/stt-type-web";
   const ASSET_RE = /\.(exe|zip)$/i;      // 우선순위: exe → zip
-  const COUNTDOWN = 5;                    // 자동 다운로드까지 초
 
   const $ = (id) => document.getElementById(id);
   const fmtMB = (b) => (b / 1048576).toFixed(1) + " MB";
@@ -127,23 +126,10 @@
         `<span>${ver}</span><span>${fmtMB(asset.size)}</span><span>${asset.name}</span>`;
 
       const btn = $("btn");
+      btn.textContent = "지금 다운로드 ↓";
       btn.disabled = false;
       btn.onclick = () => startDownload(url);
-
-      // 카운트다운 자동 시작
-      let n = COUNTDOWN;
-      const tick = () => {
-        if(n <= 0){
-          $("status").innerHTML = "<b>다운로드를 시작합니다…</b> 자동으로 안 되면 아래 버튼을 누르세요.";
-          btn.textContent = "지금 다운로드 ↓";
-          startDownload(url);
-          return;
-        }
-        $("status").innerHTML = `<b>${n}초</b> 후 자동으로 다운로드됩니다.`;
-        btn.textContent = `지금 바로 받기 (${n})`;
-        n--; setTimeout(tick, 1000);
-      };
-      tick();
+      $("status").innerHTML = "<b>최신 버전 준비 완료.</b> 아래 버튼을 눌러 받으세요.";
     }catch(e){
       fallbackToReleases();
     }
