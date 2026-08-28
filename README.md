@@ -43,6 +43,13 @@ gh release create v0.1.0 stt_type_setup.exe \
 `index.html`의 `<div id="sponsor"></div>` 는 **비어 있으면 렌더되지 않는다**.
 나중에 배너/스폰서를 넣으려면 그 안에 HTML을 채우면 된다. 지금은 노출 안 함.
 
+## 배경 영상
+
+`assets/hero.mp4` — Mixkit "Digital equalizer, close up" (id 9320)에서 13초 구간을
+무음·1280×720·H.264로 재인코딩(1.2MB). `assets/hero.jpg`는 poster.
+Mixkit Free Stock Video License(상업 이용 허용, 출처 표기 불필요). 교체하려면
+두 파일만 바꾸면 된다.
+
 ## 참고
 
 - exe는 코드서명이 없어 최초 실행 시 SmartScreen 경고가 뜬다("추가 정보 → 실행").
