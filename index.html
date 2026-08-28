@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>STT Type — 윈도우 어디서든 로컬 Whisper 음성 타이핑</title>
+<meta name="description" content="핫키를 누른 채 말하면 로컬 Whisper가 현재 창에 그대로 타이핑. 완전 오프라인·한국어·무설정. 윈도우용 무료 다운로드.">
+<meta property="og:title" content="STT Type — 로컬 Whisper 음성 타이핑">
+<meta property="og:description" content="어떤 앱에서든 핫키로 말하면 텍스트로. 완전 로컬·오프라인·한국어.">
+<meta property="og:type" content="website">
+<style>
+  :root{
+    --bg:#0a1220; --panel:#14213a; --line:#1f3354;
+    --ink:#dce7f5; --dim:#8fa3c0; --teal:#2dd4bf; --green:#86efac;
+    --mono:"SFMono-Regular",ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+    background:
+      radial-gradient(ellipse 60% 45% at 75% 10%,rgba(45,212,191,.10),transparent),
+      radial-gradient(ellipse 50% 40% at 10% 90%,rgba(20,184,166,.07),transparent),
+      var(--bg);
+    color:var(--ink); line-height:1.7; letter-spacing:-.01em;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem 1.2rem;
+  }
+  .card{width:100%; max-width:560px}
+  .eyebrow{font-family:var(--mono);font-size:.75rem;color:var(--teal);letter-spacing:.14em;margin-bottom:1rem}
+  h1{font-size:clamp(1.7rem,5vw,2.4rem);font-weight:800;line-height:1.25;letter-spacing:-.03em}
+  h1 em{font-style:normal;color:var(--teal)}
+  .sub{margin-top:1rem;color:var(--dim);font-size:1rem}
+  .feats{display:flex;flex-wrap:wrap;gap:.5rem;margin:1.6rem 0 2rem}
+  .feats span{font-family:var(--mono);font-size:.74rem;color:var(--ink);
+    background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.35);
+    border-radius:99px;padding:.32rem .9rem}
+  .dl{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1.6rem}
+  .status{font-size:.9rem;color:var(--dim);min-height:1.4em}
+  .status b{color:var(--green);font-weight:600}
+  .btn{display:block;width:100%;text-align:center;margin-top:1rem;
+    font-size:1.05rem;font-weight:700;color:#06251f;background:var(--teal);
+    text-decoration:none;border:0;border-radius:10px;padding:.95rem 1.2rem;cursor:pointer;
+    transition:background .2s,transform .15s}
+  .btn:hover{background:var(--green);transform:translateY(-1px)}
+  .btn[disabled]{opacity:.55;cursor:default;transform:none}
+  .meta{margin-top:.9rem;font-family:var(--mono);font-size:.72rem;color:var(--dim);
+    display:flex;gap:1.2rem;flex-wrap:wrap}
+  .hint{margin-top:1.1rem;font-size:.82rem;color:var(--dim)}
+  .hint a{color:var(--teal)}
+  /* 광고/스폰서 슬롯 — 지금은 비노출. 나중에 배너/스폰서 넣을 자리 */
+  #sponsor:not(:empty){margin-top:1.4rem;border:1px dashed var(--line);border-radius:10px;
+    padding:1rem;text-align:center;color:var(--dim);font-size:.8rem}
+  footer{margin-top:1.6rem;font-size:.74rem;color:var(--dim)}
+  footer a{color:var(--dim);text-decoration:underline}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="eyebrow">LOCAL WHISPER · WINDOWS</div>
+  <h1>말하면, 그대로 <em>타이핑</em>됩니다</h1>
+  <p class="sub">핫키(F8)를 누른 채 말하고 떼면, 로컬 Whisper가 변환한 텍스트를 현재 포커스된 창에 그대로 입력합니다. 메모장·브라우저·메신저 어디서든.</p>
+
+  <div class="feats">
+    <span>완전 오프라인</span><span>한국어 기본</span><span>무설정 설치</span><span>API 키 불필요</span>
+  </div>
+
+  <div class="dl">
+    <div class="status" id="status">최신 버전을 불러오는 중…</div>
+    <button class="btn" id="btn" disabled>준비 중…</button>
+    <div class="meta" id="meta"></div>
+  </div>
+
+  <!-- 광고 슬롯: 비워두면 렌더 안 됨. 나중에 이 안에 배너/스폰서 HTML 삽입 -->
+  <div id="sponsor"></div>
+
+  <p class="hint">설치 후 트레이 아이콘 표시 · 최초 1회 Whisper 모델(~250MB) 다운로드 후 완전 오프라인. Windows 10/11 64비트.</p>
+
+  <footer>
+    <span id="fallback"></span>
+    오픈소스 라이선스 고지는 설치 파일에 포함됩니다 (pystray는 LGPL-3.0).
+  </footer>
+</main>
+
+<script>
+  // ── 설정 ──────────────────────────────────────────────
+  // 릴리스 자산(exe/zip)이 올라갈 "공개" GitHub 레포. Vercel에 연결되는 이 웹 레포와 같아도 됨.
+  const REPO = "pyotel/stt-type-web";
+  const ASSET_RE = /\.(exe|zip)$/i;      // 우선순위: exe → zip
+  const COUNTDOWN = 5;                    // 자동 다운로드까지 초
+
+  const $ = (id) => document.getElementById(id);
+  const fmtMB = (b) => (b / 1048576).toFixed(1) + " MB";
+
+  function pickAsset(assets){
+    return assets.find(a => /\.exe$/i.test(a.name))
+        || assets.find(a => ASSET_RE.test(a.name)) || null;
+  }
+
+  function fallbackToReleases(msg){
+    $("status").textContent = msg || "다운로드 정보를 불러오지 못했습니다.";
+    const url = `https://github.com/${REPO}/releases/latest`;
+    const b = $("btn");
+    b.textContent = "GitHub 릴리스에서 받기 ↗";
+    b.disabled = false;
+    b.onclick = () => location.href = url;
+    $("fallback").innerHTML = "";
+  }
+
+  function startDownload(url){
+    // 같은 탭 내비게이션 → 브라우저가 파일 다운로드 처리
+    const a = document.createElement("a");
+    a.href = url; a.rel = "noopener";
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+
+  (async () => {
+    try{
+      const r = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`,
+        { headers: { "Accept": "application/vnd.github+json" } });
+      if(!r.ok) throw new Error("release " + r.status);
+      const rel = await r.json();
+      const asset = pickAsset(rel.assets || []);
+      if(!asset) throw new Error("no asset");
+
+      const url = asset.browser_download_url;
+      const ver = rel.tag_name || rel.name || "";
+      $("meta").innerHTML =
+        `<span>${ver}</span><span>${fmtMB(asset.size)}</span><span>${asset.name}</span>`;
+
+      const btn = $("btn");
+      btn.disabled = false;
+      btn.onclick = () => startDownload(url);
+
+      // 카운트다운 자동 시작
+      let n = COUNTDOWN;
+      const tick = () => {
+        if(n <= 0){
+          $("status").innerHTML = "<b>다운로드를 시작합니다…</b> 자동으로 안 되면 아래 버튼을 누르세요.";
+          btn.textContent = "지금 다운로드 ↓";
+          startDownload(url);
+          return;
+        }
+        $("status").innerHTML = `<b>${n}초</b> 후 자동으로 다운로드됩니다.`;
+        btn.textContent = `지금 바로 받기 (${n})`;
+        n--; setTimeout(tick, 1000);
+      };
+      tick();
+    }catch(e){
+      fallbackToReleases();
+    }
+  })();
+</script>
+</body>
+</html>
