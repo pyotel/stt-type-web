@@ -9,7 +9,7 @@
      crossorigin="anonymous"></script>
 
 <title>STT Type — 윈도우 음성 입력·받아쓰기 프로그램 (로컬 Whisper, 무료)</title>
-<meta name="description" content="핫키를 누른 채 말하면 로컬 Whisper가 현재 창에 그대로 타이핑하는 윈도우 음성 입력·받아쓰기 프로그램. 완전 오프라인, 한국어 지원, API 키 불필요. 무료 다운로드.">
+<meta name="description" content="핫키를 누른 채 말하면 로컬 Whisper가 현재 창에 그대로 타이핑하는 윈도우 음성 입력·받아쓰기 프로그램. 완전 오프라인, 한국어 특화(구두점·띄어쓰기 자동 교정), API 키 불필요. 무료 다운로드.">
 <meta name="keywords" content="윈도우 음성 입력, 음성 받아쓰기, 받아쓰기 프로그램, 로컬 Whisper, STT, 음성 타이핑, 오프라인 음성 인식, 한국어 받아쓰기, 무료 음성 입력">
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#0a1220">
@@ -110,7 +110,7 @@
     <p class="sub">핫키(F8)를 누른 채 말하고 떼면, 로컬 Whisper가 변환한 텍스트를 현재 포커스된 창에 그대로 입력합니다. 메모장·브라우저·메신저 어디서든.</p>
 
     <div class="feats">
-      <span>완전 오프라인</span><span>한국어 기본</span><span>무설정 설치</span><span>API 키 불필요</span>
+      <span>한국어 특화 인식</span><span>완전 오프라인</span><span>무설정 설치</span><span>API 키 불필요</span>
     </div>
 
     <div class="dl">
@@ -131,6 +131,14 @@
     <p>STT Type은 <strong>윈도우용 음성 입력·받아쓰기 프로그램</strong>입니다. 핫키(F8)를 누른 채 말하면 로컬 Whisper(faster-whisper)가 음성을 텍스트로 변환해 현재 커서가 있는 창에 그대로 입력합니다. 메모장, 브라우저 검색창, 메신저, 코드 에디터 등 <strong>어떤 앱에서든</strong> 동작합니다.</p>
     <p>모든 처리는 <strong>내 PC에서 로컬로</strong> 이뤄집니다. 최초 1회 모델을 내려받은 뒤에는 인터넷 없이 오프라인으로 쓸 수 있고, 음성이 외부 서버로 전송되지 않아 개인정보에 안전합니다. API 키나 구독도 필요 없습니다.</p>
 
+    <h2>한국어에 특히 강합니다</h2>
+    <p>STT Type은 <strong>한국어 받아쓰기</strong>에 초점을 맞췄습니다. 한국어 인식력이 검증된 Whisper 모델을 한국어 고정 모드로 돌리고, 그 위에 한국어 형태소 분석기 <strong>Kiwi</strong>로 <strong>구두점·띄어쓰기를 자동 교정</strong>합니다. 말만 하면 마침표·쉼표·띄어쓰기까지 정리된 문장이 입력됩니다.</p>
+    <ul class="why">
+      <li><strong>한국어 고정 인식</strong> — 언어 자동 감지 오류 없이 한국어에 집중해 오인식을 줄였습니다.</li>
+      <li><strong>구두점·띄어쓰기 자동 교정</strong> — Whisper가 놓치는 문장부호와 띄어쓰기를 Kiwi가 로컬에서 바로잡습니다.</li>
+      <li><strong>교정까지 전부 오프라인</strong> — 인식도 교정도 내 PC 안에서. 외부 전송 없음.</li>
+    </ul>
+
     <h2>이런 분께</h2>
     <ul class="why">
       <li><strong>윈도우 기본 음성 입력(Win+H)의 한국어 인식이 아쉬운 분</strong> — 로컬 Whisper로 한국어를 더 정확하게.</li>
@@ -141,7 +149,7 @@
     <h2>자주 묻는 질문</h2>
     <details><summary>무료인가요?</summary><p>네, 현재 무료로 다운로드해 사용할 수 있습니다.</p></details>
     <details><summary>인터넷 없이 오프라인으로 되나요?</summary><p>최초 1회 Whisper 모델(약 250MB)을 내려받은 뒤에는 완전 오프라인으로 동작합니다. 음성은 외부로 전송되지 않습니다.</p></details>
-    <details><summary>한국어를 지원하나요?</summary><p>네. 로컬 Whisper 기반으로 한국어를 기본 지원하며, 설정에서 다른 언어로 바꿀 수 있습니다.</p></details>
+    <details><summary>한국어를 지원하나요?</summary><p>네, 한국어가 주력입니다. 로컬 Whisper를 한국어 고정 모드로 인식하고, 한국어 형태소 분석기 Kiwi가 구두점과 띄어쓰기까지 자동 교정합니다. 설정에서 다른 언어로 바꿀 수도 있습니다.</p></details>
     <details><summary>어떻게 사용하나요?</summary><p>설치 후 실행하면 트레이 아이콘이 생깁니다. F8을 누른 채 말하고 떼면 현재 창에 텍스트가 입력됩니다.</p></details>
     <details><summary>어떤 윈도우에서 되나요?</summary><p>Windows 10 및 11 64비트에서 동작합니다.</p></details>
   </section>
